@@ -73,7 +73,7 @@ flowchart TD
 
 > midPoint IGA platform at `localhost:8080/midpoint` showing all provisioned user identities after reconciliation. Each employee from SimplifyHR has a corresponding identity object in midPoint with **2 linked accounts** (HR source + OpenLDAP projection), confirming the automated provisioning pipeline is functioning end-to-end.
 
-![midPoint All Users](screenshot_midpoint_all_users.png)
+![midPoint All Users](screenshot_midpoint_allusers.png)
 
 ---
 
