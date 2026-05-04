@@ -1,6 +1,3 @@
-# iga-jml-automation-midpoint
-Identity &amp; Access Management (IAM) Lab — JML Lifecycle Implementation
-
 # Identity & Access Management (IAM) Lab — JML Lifecycle Implementation
 
 > A hands-on lab implementing a fully automated **Joiner-Mover-Leaver (JML)** identity lifecycle using enterprise-grade IAM tooling — all running locally without cloud costs or vendor licenses.
@@ -66,6 +63,18 @@ flowchart TD
 
 **Outcome:** New hire has a fully provisioned LDAP account seconds after HR data entry.
 
+#### ✅ Proof — SimplifyHR: Live Employee Directory
+
+> SimplifyHR running at `localhost:8085` showing 7 active employees, including Lucas Webber (#1007) added during the Joiner workflow. The **Live sync with midPoint** indicator in the top-right confirms the HR system is actively connected to the IGA engine.
+
+![SimplifyHR Employee Directory](screenshot_simplifyhr_employee_directory.png)
+
+#### ✅ Proof — midPoint: Provisioned Identities After Reconciliation
+
+> midPoint IGA platform at `localhost:8080/midpoint` showing all provisioned user identities after reconciliation. Each employee from SimplifyHR has a corresponding identity object in midPoint with **2 linked accounts** (HR source + OpenLDAP projection), confirming the automated provisioning pipeline is functioning end-to-end.
+
+![midPoint All Users](screenshot_midpoint_all_users.png)
+
 ---
 
 ### 2. Leaver Workflow — Offboarding
@@ -84,6 +93,18 @@ flowchart TD
 
 > [!NOTE]
 > **Enterprise Best Practice:** Accounts are *disabled*, not deleted. Deletion follows a retention period of 30–90 days defined by organizational policy, preserving the ability to recover data or conduct investigations before permanent removal.
+
+#### ✅ Proof — phpLDAPadmin: James Anderson Moved to `ou=inactive`
+
+> phpLDAPadmin at `localhost:8089` showing the full LDAP directory tree after the Leaver workflow executed. James Anderson's account (`uid=Employee.James`) has been automatically relocated from `ou=people` to `ou=inactive` by midPoint — confirmed by the Distinguished Name shown in the header: `uid=Employee.James,ou=inactive,dc=simplifyiam,dc=com`. The `ou=people` OU still contains the 7 remaining active employees untouched.
+
+![phpLDAPadmin - James Anderson moved to ou=inactive](screenshot_phpldap_james_inactive_tree.png)
+
+#### ✅ Proof — phpLDAPadmin: Full LDAP Entry with Object Attributes
+
+> Detailed attribute view of James Anderson's LDAP entry inside `ou=inactive`. The full LDAP schema is intact — `cn: James Anderson`, `givenName: James`, and `objectClass` values (`inetOrgPerson`, `nsAccount`, `organizationalPerson`, `person`) — all provisioned and preserved automatically by midPoint. The account was disabled and relocated without any manual directory interaction, consistent with enterprise disable-not-delete offboarding policy.
+
+![phpLDAPadmin - James Anderson LDAP attributes in ou=inactive](screenshot_phpldap_james_inactive_attributes.png)
 
 ---
 
@@ -161,7 +182,7 @@ bash /home/openiam/status-lab.sh
       Status     : Active
 
 2. SimplifyIAM → Tasks → All Tasks → HR CSV Reconciliation → Run Now
-   (wait 10–15 seconds for status to change from Running → Success)
+   (wait 10-15 seconds for status to change from Running → Success)
 
 3. Verify identity in SimplifyIAM:
    Users → All Users → Lucas Weber
